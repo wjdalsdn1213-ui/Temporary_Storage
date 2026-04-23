@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>홈페이지 시작 화면</title>
+  <style>
+    :root {
+      --bg-start: #f5f9ff;
+      --bg-end: #eef2ff;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-sub: #4b5563;
+      --primary: #0056a8;
+      --primary-hover: #00427f;
+      --secondary: #0080c9;
+      --secondary-hover: #00649b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background-image:
+        linear-gradient(160deg, rgba(245, 249, 255, 0.28), rgba(238, 242, 255, 0.28)),
+        url("./assets/home-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: var(--text-main);
+      padding: 20px;
+    }
+
+    .container {
+      width: min(560px, 100%);
+      background: var(--card-bg);
+      border-radius: 0;
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.12);
+      padding: 28px 28px 34px;
+      text-align: center;
+    }
+
+    .top-banner {
+      width: 100%;
+      border-radius: 0;
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+      padding: 14px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 24px rgba(0, 86, 168, 0.08);
+    }
+
+    .banner-logo {
+      width: 54px;
+      height: 54px;
+      border-radius: 0;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .banner-text {
+      text-align: left;
+      line-height: 1.2;
+    }
+
+    .banner-title {
+      font-weight: 950;
+      color: #111827;
+      margin-bottom: 4px;
+      font-size: 1.02rem;
+    }
+
+    .banner-sub {
+      color: var(--text-sub);
+      font-weight: 650;
+      font-size: 0.9rem;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.5rem, 2.8vw, 2rem);
+    }
+
+    p {
+      margin: 0 0 28px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .button-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel {
+      margin-top: 18px;
+      text-align: left;
+      display: none;
+      border: 1px solid #e5e7eb;
+      border-radius: 0;
+      padding: 16px;
+      background: #f9fafb;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .patient-profile {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 0;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 12px;
+    }
+
+    .patient-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 0;
+      border: 1px dashed #cbd5e1;
+      background: #ffffff;
+      object-fit: contain;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-size: 0.92rem;
+      color: #374151;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 0;
+      padding: 10px 12px;
+      font-size: 0.96rem;
+      outline: none;
+      background: #fff;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+      box-shadow: 0 6px 16px rgba(0, 86, 168, 0.22);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-patient {
+      background: var(--primary);
+    }
+
+    .btn-patient:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 10px 22px rgba(0, 66, 127, 0.28);
+    }
+
+    .btn-therapist {
+      background: var(--secondary);
+    }
+
+    .btn-therapist:hover {
+      background: var(--secondary-hover);
+      box-shadow: 0 10px 22px rgba(0, 100, 155, 0.28);
+    }
+
+    .btn-submit {
+      margin-top: 4px;
+      background: var(--primary);
+      box-shadow: 0 6px 16px rgba(0, 86, 168, 0.22);
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 10px 22px rgba(0, 66, 127, 0.28);
+    }
+
+    .message {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      min-height: 1.2em;
+    }
+
+    .message.error {
+      color: #b91c1c;
+    }
+
+    .message.success {
+      color: #047857;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="top-banner" aria-label="로고/배너 영역">
+      <div class="banner-text">
+        <div class="banner-title">의료 서비스 시작</div>
+        <div class="banner-sub">환자와 치료사를 연결합니다</div>
+      </div>
+    </div>
+    <h1>환영합니다</h1>
+    <p>원하시는 이용 유형을 선택하고 시작해 주세요.</p>
+    <div class="button-group">
+      <button id="patientStartBtn" class="btn btn-patient" type="button">환자 로그인</button>
+      <button id="therapistStartBtn" class="btn btn-therapist" type="button">치료사 로그인</button>
+    </div>
+
+    <section id="patientPanel" class="panel" aria-live="polite">
+      <div class="patient-profile">
+        <img
+          id="patientAvatar"
+          class="patient-avatar"
+          alt="공백 프로필 이미지"
+          src="./assets/kim-profile.png"
+        />
+
+        <div class="info-grid">
+          <div class="field" style="margin-bottom: 0;">
+            <label for="patientName">성함</label>
+            <input id="patientName" type="text" value="김○○" readonly />
+          </div>
+
+          <div class="field" style="margin-bottom: 0;">
+            <label for="patientRegNo">주민등록번호</label>
+            <input id="patientRegNo" type="text" value="000000-0000000" readonly />
+          </div>
+
+          <div class="field" style="margin-bottom: 0;">
+            <label for="patientAge">환자 나이</label>
+            <input id="patientAge" type="text" value="만 25세" readonly />
+          </div>
+        </div>
+      </div>
+
+      <button id="patientSubmitBtn" class="btn btn-submit" type="button">로그인</button>
+      <div id="patientMessage" class="message"></div>
+    </section>
+
+    <section id="therapistPanel" class="panel" aria-live="polite">
+      <div class="field">
+        <label for="therapistId">아이디</label>
+        <input id="therapistId" type="text" placeholder="아이디를 입력해 주세요" />
+      </div>
+      <div class="field">
+        <label for="therapistPassword">비밀번호</label>
+        <input id="therapistPassword" type="password" placeholder="비밀번호를 입력해 주세요" />
+      </div>
+      <button id="therapistSubmitBtn" class="btn btn-submit" type="button">로그인</button>
+      <div id="therapistMessage" class="message"></div>
+    </section>
+  </main>
+
+  <script>
+    const patientStartBtn = document.getElementById("patientStartBtn");
+    const therapistStartBtn = document.getElementById("therapistStartBtn");
+
+    const patientPanel = document.getElementById("patientPanel");
+    const therapistPanel = document.getElementById("therapistPanel");
+
+    const patientNameInput = document.getElementById("patientName");
+    const therapistIdInput = document.getElementById("therapistId");
+    const therapistPasswordInput = document.getElementById("therapistPassword");
+
+    const patientSubmitBtn = document.getElementById("patientSubmitBtn");
+    const therapistSubmitBtn = document.getElementById("therapistSubmitBtn");
+
+    const patientMessage = document.getElementById("patientMessage");
+    const therapistMessage = document.getElementById("therapistMessage");
+
+    function resetMessages() {
+      patientMessage.textContent = "";
+      patientMessage.className = "message";
+      therapistMessage.textContent = "";
+      therapistMessage.className = "message";
+    }
+
+    patientStartBtn.addEventListener("click", function () {
+      resetMessages();
+      patientPanel.classList.add("active");
+      therapistPanel.classList.remove("active");
+      patientNameInput.focus();
+    });
+
+    therapistStartBtn.addEventListener("click", function () {
+      resetMessages();
+      therapistPanel.classList.add("active");
+      patientPanel.classList.remove("active");
+      therapistIdInput.focus();
+    });
+
+    patientSubmitBtn.addEventListener("click", function () {
+      // 환자 로그인 성공 시 환자 대시보드로 이동
+      patientMessage.textContent = "";
+      patientMessage.className = "message";
+      window.location.href = "patient_user_dashboard.html";
+    });
+
+    therapistSubmitBtn.addEventListener("click", function () {
+      const id = therapistIdInput.value.trim();
+      const password = therapistPasswordInput.value.trim();
+
+      if (id === "admin" && password === "1234") {
+        // 로그인 성공 시 바로 치료사 대시보드로 이동
+        window.location.href = "therapist.html";
+      } else {
+        therapistMessage.textContent = "아이디 또는 비밀번호가 올바르지 않습니다.";
+        therapistMessage.className = "message error";
+      }
+    });
+  </script>
+</body>
+</html>

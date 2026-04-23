@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>치료사 대시보드</title>
+  <style>
+    :root {
+      --bg-start: #f5f9ff;
+      --bg-end: #eef2ff;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-sub: #4b5563;
+      --primary: #0056a8;
+      --primary-hover: #00427f;
+      --secondary: #0080c9;
+      --secondary-hover: #00649b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background-color: var(--bg-start);
+      background-image:
+        linear-gradient(160deg, rgba(245, 249, 255, 0.78), rgba(238, 242, 255, 0.72)),
+        url("./assets/therapist-dashboard-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--text-main);
+      padding: 20px;
+    }
+
+    .container {
+      width: min(1120px, 100%);
+      background: var(--card-bg);
+      border-radius: 0;
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.12);
+      padding: 28px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      margin-top: 0;
+      border: 1px solid #e5e7eb;
+      border-radius: 0;
+      background: #f9fafb;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: #111827;
+    }
+
+    .patient-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .patient-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 0;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      justify-content: space-between;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 0;
+      border: 1px dashed #cbd5e1;
+      background: #fff;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .patient-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .patient-name {
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      padding: 12px 18px;
+      font-size: 0.94rem;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+      box-shadow: 0 6px 16px rgba(0, 86, 168, 0.22);
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 10px 22px rgba(0, 66, 127, 0.28);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: #eff6ff;
+    }
+
+    .exercise-panel {
+      margin-top: 0;
+      border: 1px solid #e5e7eb;
+      border-radius: 0;
+      background: #f9fafb;
+      padding: 16px;
+      text-align: left;
+      display: none;
+    }
+
+    .exercise-panel.active {
+      display: block;
+    }
+
+    .exercise-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .exercise-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+    }
+
+    .exercise-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .exercise-message {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #047857;
+      min-height: 1.1em;
+    }
+
+    .patient-alert-box {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      border-radius: 0;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      text-align: left;
+      display: none;
+    }
+
+    .patient-alert-box.active {
+      display: block;
+    }
+
+    .chat-action {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      margin: 0;
+      display: none;
+      z-index: 1000;
+    }
+
+    .chat-action.active {
+      display: block;
+    }
+
+    .chat-action .btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 1.8rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 920px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mp-summary-panel {
+      margin-top: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 0;
+      background: #f9fafb;
+      padding: 16px;
+      text-align: left;
+      display: none;
+    }
+
+    .mp-summary-panel.active {
+      display: block;
+    }
+
+    .mp-summary-panel h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: #111827;
+    }
+
+    .mp-summary-hint {
+      margin: 0 0 10px;
+      font-size: 0.82rem;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .mp-summary-meta {
+      margin: 0 0 8px;
+      font-size: 0.85rem;
+      color: #0f766e;
+      font-weight: 600;
+    }
+
+    .mp-summary-text {
+      margin: 0;
+      padding: 12px 14px;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: #111827;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 320px;
+      overflow: auto;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>치료사 대시보드</h1>
+    <p>환자 목록을 확인할 수 있습니다.</p>
+
+    <div class="chat-action">
+      <button id="therapistChatBtn" class="btn btn-primary" type="button" aria-label="1:1 채팅 열기">+</button>
+    </div>
+
+    <div class="dashboard-grid">
+      <section class="panel" aria-label="환자 목록">
+        <h2>환자 목록</h2>
+        <div class="patient-list">
+          <div class="patient-item">
+            <div class="patient-main">
+              <img
+                class="avatar"
+                alt="공백 프로필 이미지"
+                src="./assets/kim-profile.png"
+              />
+              <div class="patient-name">김○○</div>
+            </div>
+            <button id="selectPatientBtn" class="btn btn-outline" type="button">
+              선택
+            </button>
+          </div>
+        </div>
+        <div id="patientAlertBox" class="patient-alert-box"></div>
+      </section>
+
+      <section id="exercisePanel" class="exercise-panel" aria-label="운동 선택">
+        <h2>처방 운동 선택</h2>
+        <p>김○○에게 처방할 운동을 선택해 주세요.</p>
+        <div class="exercise-list">
+          <label class="exercise-item">
+            <input type="checkbox" value="스트레칭" />
+            <span>전신 스트레칭</span>
+          </label>
+          <label class="exercise-item">
+            <input type="checkbox" value="근력운동" />
+            <span>가벼운 근력 운동</span>
+          </label>
+          <label class="exercise-item">
+            <input type="checkbox" value="호흡운동" />
+            <span>호흡/이완 운동</span>
+          </label>
+          <label class="exercise-item">
+            <input type="checkbox" value="균형훈련" />
+            <span>균형 잡기 훈련</span>
+          </label>
+        </div>
+        <div class="exercise-actions">
+          <button id="saveExerciseBtn" class="btn btn-primary" type="button">운동 선택 완료</button>
+        </div>
+        <div id="exerciseMessage" class="exercise-message"></div>
+      </section>
+    </div>
+
+    <section id="mpSummaryPanel" class="mp-summary-panel" aria-label="자세 분석 결과">
+      <h2>자세 분석 결과</h2>
+      <p class="mp-summary-hint">
+        환자 대시보드에서 영상 자세 분석(파일) 또는 실시간 분석을 중지한 뒤, 같은 브라우저에 저장된 최신 요약이 여기에 표시됩니다.
+      </p>
+      <p id="mpTherapistMeta" class="mp-summary-meta"></p>
+      <pre id="mpTherapistText" class="mp-summary-text"></pre>
+    </section>
+  </main>
+  <script>
+    const selectPatientBtn = document.getElementById("selectPatientBtn");
+    const exercisePanel = document.getElementById("exercisePanel");
+    const saveExerciseBtn = document.getElementById("saveExerciseBtn");
+    const exerciseMessage = document.getElementById("exerciseMessage");
+    const patientAlertBox = document.getElementById("patientAlertBox");
+    const chatAction = document.querySelector(".chat-action");
+    const mpSummaryPanel = document.getElementById("mpSummaryPanel");
+    const REHAB_API_BASE = "http://127.0.0.1:8001";
+    const PATIENT_ID = 1;
+
+    const bodyPartLabelMap = {
+      neck: "목",
+      shoulder: "어깨",
+      back: "등·허리",
+      hip: "고관절(엉덩이)",
+      knee: "무릎",
+      ankle: "발목·발",
+      wrist: "손목·손",
+    };
+
+    (function initPatientAlert() {
+      const painLevel = localStorage.getItem("painLevel");
+      const bodyPartKey = localStorage.getItem("bodyPartKey");
+      const hasData = !!(painLevel || bodyPartKey);
+
+      let lines = [];
+      if (!hasData) {
+        lines.push("등록된 통증 정도/통증 부위 정보가 없습니다.");
+      } else {
+        if (painLevel) {
+          lines.push("· 최근 환자 통증 정도(0~9): " + painLevel);
+        }
+        if (bodyPartKey) {
+          const label = bodyPartLabelMap[bodyPartKey] || bodyPartKey;
+          lines.push("· 최근 통증 부위: " + label);
+        }
+      }
+      patientAlertBox.innerHTML = lines.join("<br />");
+    })();
+
+    const MP_THERAPIST_KEY = "mpAnalysisForTherapist";
+
+    function renderPatientMpSummary() {
+      const metaEl = document.getElementById("mpTherapistMeta");
+      const textEl = document.getElementById("mpTherapistText");
+      const raw = localStorage.getItem(MP_THERAPIST_KEY);
+      if (!raw) {
+        metaEl.textContent = "아직 저장된 분석 요약이 없습니다.";
+        textEl.textContent = "";
+        return;
+      }
+      try {
+        const o = JSON.parse(raw);
+        const when = o.at
+          ? new Date(o.at).toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" })
+          : "";
+        const srcMap = { file: "영상 파일", live: "실시간(웹캠)" };
+        const src = srcMap[o.source] || o.source || "";
+        const parts = [];
+        if (o.patientName) parts.push("환자: " + o.patientName);
+        if (when) parts.push("갱신: " + when);
+        if (src) parts.push("유형: " + src);
+        metaEl.textContent = parts.join(" · ");
+        textEl.textContent = o.text || "";
+      } catch (e) {
+        metaEl.textContent = "";
+        textEl.textContent = raw;
+      }
+    }
+
+    window.addEventListener("storage", function (e) {
+      if (!mpSummaryPanel.classList.contains("active")) return;
+      if (e.key === MP_THERAPIST_KEY) renderPatientMpSummary();
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (!mpSummaryPanel.classList.contains("active")) return;
+      if (document.visibilityState === "visible") renderPatientMpSummary();
+    });
+
+    (function initChatButton() {
+      const CHAT_SERVER = "http://127.0.0.1:8000";
+      const CHAT_ROOM = "ee:cap:main";
+
+      function buildTherapistPreviewUrl() {
+        const basePreview = new URL("../1by1_chatting/preview_therapist.html", window.location.href);
+        basePreview.searchParams.set("room", CHAT_ROOM);
+        basePreview.searchParams.set("user", "therapist-1");
+        basePreview.searchParams.set("server", CHAT_SERVER);
+        return basePreview.toString();
+      }
+
+      document.getElementById("therapistChatBtn").addEventListener("click", function () {
+        const chatUrl = buildTherapistPreviewUrl();
+        // 팝업 정책 영향을 받지 않도록 현재 탭으로 이동
+        window.location.assign(chatUrl);
+      });
+    })();
+
+    async function syncPrescriptionToServer(selectedExercises) {
+      const payload = {
+        patient_id: PATIENT_ID,
+        selected_exercises: selectedExercises,
+        sent: true,
+      };
+      const res = await fetch(`${REHAB_API_BASE}/api/prescriptions/${PATIENT_ID}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("처방 저장 API 실패");
+      return res.json();
+    }
+
+    selectPatientBtn.addEventListener("click", function () {
+      exercisePanel.classList.add("active");
+      chatAction.classList.add("active");
+      patientAlertBox.classList.add("active");
+      mpSummaryPanel.classList.add("active");
+      exerciseMessage.textContent = "";
+      renderPatientMpSummary();
+    });
+
+    saveExerciseBtn.addEventListener("click", async function () {
+      const checkboxes = exercisePanel.querySelectorAll("input[type='checkbox']");
+      const selected = [];
+      checkboxes.forEach((cb) => {
+        if (cb.checked) selected.push(cb.nextElementSibling.textContent.trim());
+      });
+
+      if (selected.length === 0) {
+        exerciseMessage.textContent = "한 가지 이상 운동을 선택해 주세요.";
+        exerciseMessage.style.color = "#b91c1c";
+        return;
+      }
+
+      try {
+        await syncPrescriptionToServer(selected);
+      } catch (e) {
+        exerciseMessage.textContent = "서버 저장에 실패했습니다. 백엔드 실행 상태를 확인해 주세요.";
+        exerciseMessage.style.color = "#b91c1c";
+        return;
+      }
+
+      exerciseMessage.textContent = "선택된 운동이 저장되었습니다: " + selected.join(", ");
+      exerciseMessage.style.color = "#047857";
+
+      // 김○○ 대시보드에 선택된 운동 표시용 데이터 저장
+      localStorage.setItem("patientName", "김○○");
+      localStorage.setItem("selectedExercises", JSON.stringify(selected));
+      // 새로 선택하면 전송 완료 상태를 해제
+      localStorage.removeItem("exerciseSent");
+      localStorage.removeItem("exerciseCounts"); // 새로 선택하면 횟수 기본값으로 초기화
+
+      // 대시보드로 이동
+      window.location.href = "patient_dashboard.html";
+    });
+  </script>
+</body>
+</html>
+
