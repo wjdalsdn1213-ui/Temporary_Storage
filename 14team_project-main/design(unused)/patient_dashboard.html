@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>김환자 대시보드</title>
+  <style>
+    :root {
+      --bg-start: #f5f9ff;
+      --bg-end: #eef2ff;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-sub: #4b5563;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary: #0f766e;
+      --secondary-hover: #0d5f59;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(160deg, var(--bg-start), var(--bg-end));
+      color: var(--text-main);
+      padding: 20px;
+    }
+
+    .container {
+      width: min(720px, 100%);
+      background: var(--card-bg);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.12);
+      padding: 28px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .patient-top {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 18px;
+      border: 1px dashed #cbd5e1;
+      background: #ffffff;
+      object-fit: contain;
+    }
+
+    .patient-info {
+      display: grid;
+      gap: 8px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.98rem;
+    }
+
+    .info-row .k {
+      color: #374151;
+      font-weight: 700;
+    }
+
+    .info-row .v {
+      font-weight: 800;
+    }
+
+    .section {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #f9fafb;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: #111827;
+    }
+
+    .exercise-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .exercise-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .exercise-name {
+      font-weight: 900;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-btn {
+      width: 44px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .step-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .step-count {
+      min-width: 44px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .hint {
+      margin-top: 10px;
+      color: #047857;
+      font-size: 0.92rem;
+      font-weight: 700;
+      min-height: 1.2em;
+    }
+
+    .send-row {
+      margin-top: 12px;
+    }
+
+    .send-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0, 86, 168, 0.22);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+    }
+
+    .send-btn:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 10px 22px rgba(0, 66, 127, 0.28);
+    }
+
+    .send-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>대시보드</h1>
+    <p>김환자의 선택 운동과 횟수를 확인할 수 있습니다.</p>
+
+    <section class="patient-top" aria-label="환자 정보">
+      <img
+        class="avatar"
+        alt="공백 프로필 이미지"
+        src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='200' height='200' fill='white'/></svg>"
+      />
+      <div class="patient-info">
+        <div class="info-row">
+          <div class="k">성함</div>
+          <div class="v" id="dashName">김환자</div>
+        </div>
+        <div class="info-row">
+          <div class="k">주민등록번호</div>
+          <div class="v">000000-0000000</div>
+        </div>
+        <div class="info-row">
+          <div class="k">환자 나이</div>
+          <div class="v">만 25세</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="선택 운동">
+      <h2>선택된 운동</h2>
+      <div id="exerciseList" class="exercise-list"></div>
+      <div id="dashHint" class="hint"></div>
+      <div class="send-row">
+        <button id="sendBtn" class="send-btn" type="button">보내기</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const exerciseListEl = document.getElementById("exerciseList");
+    const dashHintEl = document.getElementById("dashHint");
+    const sendBtn = document.getElementById("sendBtn");
+
+    const sentFlag = localStorage.getItem("exerciseSent") === "true";
+    if (sentFlag) {
+      dashHintEl.textContent = "치료사에서 전송이 완료되었습니다.";
+      dashHintEl.style.color = "#047857";
+    }
+
+    const storedExercisesRaw = localStorage.getItem("selectedExercises");
+    const storedExercises = storedExercisesRaw ? JSON.parse(storedExercisesRaw) : [];
+
+    const patientName = localStorage.getItem("patientName") || "김환자";
+    document.getElementById("dashName").textContent = patientName;
+
+    // 횟수 데이터: { "스트레칭": 3, "근력운동": 5, ... }
+    const storedCountsRaw = localStorage.getItem("exerciseCounts");
+    let exerciseCounts = storedCountsRaw ? JSON.parse(storedCountsRaw) : {};
+
+    function saveCounts() {
+      localStorage.setItem("exerciseCounts", JSON.stringify(exerciseCounts));
+    }
+
+    function getCount(exerciseName) {
+      // 기본값을 1로 설정 (선택된 운동에 대해 횟수를 정하기 전에도 표시)
+      const v = exerciseCounts[exerciseName];
+      if (typeof v === "number" && Number.isFinite(v)) return v;
+      return 1;
+    }
+
+    function setCount(exerciseName, next) {
+      // 전송 완료된 이후에는 횟수를 변경하지 않음
+      if (localStorage.getItem("exerciseSent") === "true") return;
+
+      // 최소 1회부터 증가/감소
+      const min = 1;
+      const max = 20;
+      const clamped = Math.max(min, Math.min(max, next));
+      exerciseCounts[exerciseName] = clamped;
+      saveCounts();
+      render(); // 단순 렌더링 (요소가 적어 부담 적음)
+    }
+
+    function makeExerciseItem(exerciseName) {
+      const count = getCount(exerciseName);
+      const item = document.createElement("div");
+      item.className = "exercise-item";
+
+      item.innerHTML = `
+        <div class="exercise-name">${exerciseName}</div>
+        <div class="stepper" aria-label="${exerciseName} 횟수 선택">
+          <button class="step-btn" type="button" data-exercise="${exerciseName}" data-delta="-1">＜</button>
+          <div class="step-count" id="count-${exerciseName}">${count}</div>
+          <button class="step-btn" type="button" data-exercise="${exerciseName}" data-delta="1">＞</button>
+        </div>
+      `;
+      return item;
+    }
+
+    function render() {
+      exerciseListEl.innerHTML = "";
+
+      if (!storedExercises.length) {
+        dashHintEl.textContent = "아직 선택된 운동이 없습니다. 치료사에서 운동을 선택해 주세요.";
+        dashHintEl.style.color = "#b91c1c";
+        sendBtn.disabled = false;
+        return;
+      }
+
+      if (localStorage.getItem("exerciseSent") === "true") {
+        dashHintEl.textContent = "치료사에서 전송이 완료되었습니다.";
+        dashHintEl.style.color = "#047857";
+        sendBtn.disabled = true;
+      } else {
+        dashHintEl.textContent = "좌우 버튼으로 횟수를 조절한 뒤, 아래에서 '보내기'를 눌러주세요.";
+        dashHintEl.style.color = "#047857";
+        sendBtn.disabled = false;
+      }
+
+      storedExercises.forEach((name) => {
+        exerciseListEl.appendChild(makeExerciseItem(name));
+      });
+
+      // stepper 버튼 이벤트 바인딩
+      exerciseListEl.querySelectorAll("button.step-btn").forEach((btn) => {
+        const disable = localStorage.getItem("exerciseSent") === "true";
+        btn.disabled = disable;
+        if (disable) return;
+
+        btn.addEventListener("click", function () {
+          const exerciseName = btn.getAttribute("data-exercise");
+          const delta = Number(btn.getAttribute("data-delta"));
+          const current = getCount(exerciseName);
+          setCount(exerciseName, current + delta);
+        });
+      });
+    }
+
+    // 최초 렌더
+    render();
+
+    sendBtn.addEventListener("click", function () {
+      if (!storedExercises.length) {
+        dashHintEl.textContent = "먼저 운동을 선택해 주세요.";
+        dashHintEl.style.color = "#b91c1c";
+        return;
+      }
+
+      localStorage.setItem("exerciseSent", "true");
+      // 전송 이후에는 stepper가 비활성화되고, 버튼 문구만 변경
+      sendBtn.textContent = "전송 완료";
+      dashHintEl.textContent = "보내기 완료! 환자용 대시보드에서 확인할 수 있습니다.";
+      dashHintEl.style.color = "#047857";
+
+      render();
+    });
+  </script>
+</body>
+</html>
+

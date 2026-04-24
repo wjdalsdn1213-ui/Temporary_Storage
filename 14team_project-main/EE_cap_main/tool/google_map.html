@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Google Map Tool</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: #ffffff;
+      color: #111827;
+    }
+    .wrap {
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .query-input {
+      flex: 1 1 260px;
+      min-width: 220px;
+      border: 1px solid #d1d5db;
+      padding: 8px 10px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+    .search-btn {
+      border: 0;
+      background: #2563eb;
+      color: #fff;
+      padding: 8px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .search-btn:hover {
+      background: #1d4ed8;
+    }
+    .map-frame {
+      width: 100%;
+      min-height: 390px;
+      border: 1px solid #d1d5db;
+    }
+    .helper {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.83rem;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="controls">
+      <input
+        id="queryInput"
+        class="query-input"
+        type="text"
+        value="근처 재활의학과"
+        aria-label="지도 검색어"
+        placeholder="예) 서울 재활의학과"
+      />
+      <button id="searchBtn" class="search-btn" type="button">지도 검색</button>
+    </div>
+    <iframe
+      id="mapFrame"
+      class="map-frame"
+      loading="lazy"
+      allowfullscreen
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Google Maps"
+      src="https://maps.google.com/maps?q=%EA%B7%BC%EC%B2%98%20%EC%9E%AC%ED%99%9C%EC%9D%98%ED%95%99%EA%B3%BC&z=14&output=embed"
+    ></iframe>
+    <p class="helper">검색어를 바꾸고 "지도 검색"을 누르면 해당 위치를 표시합니다.</p>
+  </div>
+
+  <script>
+    const queryInput = document.getElementById("queryInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const mapFrame = document.getElementById("mapFrame");
+
+    function updateMap() {
+      const raw = queryInput.value.trim();
+      if (!raw) return;
+      mapFrame.src = "https://maps.google.com/maps?q=" + encodeURIComponent(raw) + "&z=14&output=embed";
+    }
+
+    searchBtn.addEventListener("click", updateMap);
+    queryInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        updateMap();
+      }
+    });
+  </script>
+</body>
+</html>

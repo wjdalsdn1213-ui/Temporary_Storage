@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>치료사 대시보드</title>
+  <style>
+    :root {
+      --bg-start: #f5f9ff;
+      --bg-end: #eef2ff;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-sub: #4b5563;
+      --primary: #0056a8;
+      --primary-hover: #00427f;
+      --secondary: #0080c9;
+      --secondary-hover: #00649b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(160deg, var(--bg-start), var(--bg-end));
+      color: var(--text-main);
+      padding: 20px;
+    }
+
+    .container {
+      width: min(640px, 100%);
+      background: var(--card-bg);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.12);
+      padding: 28px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .panel {
+      margin-top: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #f9fafb;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: #111827;
+    }
+
+    .patient-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .patient-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      justify-content: space-between;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px dashed #cbd5e1;
+      background: #fff;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .patient-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .patient-name {
+      font-weight: 800;
+    }
+
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 0.94rem;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+      box-shadow: 0 6px 16px rgba(0, 86, 168, 0.22);
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 10px 22px rgba(0, 66, 127, 0.28);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: #eff6ff;
+    }
+
+    .exercise-panel {
+      margin-top: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #f9fafb;
+      padding: 16px;
+      text-align: left;
+      display: none;
+    }
+
+    .exercise-panel.active {
+      display: block;
+    }
+
+    .exercise-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .exercise-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+    }
+
+    .exercise-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .exercise-message {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #047857;
+      min-height: 1.1em;
+    }
+
+    .patient-alert-box {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>치료사 대시보드</h1>
+    <p>환자 목록을 확인할 수 있습니다.</p>
+
+    <section class="panel" aria-label="환자 목록">
+      <h2>환자 목록</h2>
+      <div class="patient-list">
+        <div class="patient-item">
+          <div class="patient-main">
+            <img
+              class="avatar"
+              alt="공백 프로필 이미지"
+              src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='88' height='88'><rect width='88' height='88' fill='white'/></svg>"
+            />
+            <div class="patient-name">김환자</div>
+          </div>
+          <button id="selectPatientBtn" class="btn btn-outline" type="button">
+            선택
+          </button>
+        </div>
+      </div>
+      <div id="patientAlertBox" class="patient-alert-box"></div>
+    </section>
+
+    <section id="exercisePanel" class="exercise-panel" aria-label="운동 선택">
+      <h2>처방 운동 선택</h2>
+      <p>김환자에게 처방할 운동을 선택해 주세요.</p>
+      <div class="exercise-list">
+        <label class="exercise-item">
+          <input type="checkbox" value="스트레칭" />
+          <span>전신 스트레칭</span>
+        </label>
+        <label class="exercise-item">
+          <input type="checkbox" value="근력운동" />
+          <span>가벼운 근력 운동</span>
+        </label>
+        <label class="exercise-item">
+          <input type="checkbox" value="호흡운동" />
+          <span>호흡/이완 운동</span>
+        </label>
+        <label class="exercise-item">
+          <input type="checkbox" value="균형훈련" />
+          <span>균형 잡기 훈련</span>
+        </label>
+      </div>
+      <div class="exercise-actions">
+        <button id="saveExerciseBtn" class="btn btn-primary" type="button">운동 선택 완료</button>
+      </div>
+      <div id="exerciseMessage" class="exercise-message"></div>
+    </section>
+  </main>
+  <script>
+    const selectPatientBtn = document.getElementById("selectPatientBtn");
+    const exercisePanel = document.getElementById("exercisePanel");
+    const saveExerciseBtn = document.getElementById("saveExerciseBtn");
+    const exerciseMessage = document.getElementById("exerciseMessage");
+    const patientAlertBox = document.getElementById("patientAlertBox");
+
+    const bodyPartLabelMap = {
+      neck: "목",
+      shoulder: "어깨",
+      back: "등·허리",
+      hip: "고관절(엉덩이)",
+      knee: "무릎",
+      ankle: "발목·발",
+      wrist: "손목·손",
+    };
+
+    (function initPatientAlert() {
+      const painLevel = localStorage.getItem("painLevel");
+      const bodyPartKey = localStorage.getItem("bodyPartKey");
+      const hasData = !!(painLevel || bodyPartKey);
+
+      let lines = [];
+      if (!hasData) {
+        lines.push("등록된 통증 정도/통증 부위 정보가 없습니다.");
+      } else {
+        if (painLevel) {
+          lines.push("· 최근 환자 통증 정도(0~9): " + painLevel);
+        }
+        if (bodyPartKey) {
+          const label = bodyPartLabelMap[bodyPartKey] || bodyPartKey;
+          lines.push("· 최근 통증 부위: " + label);
+        }
+      }
+      patientAlertBox.innerHTML = lines.join("<br />");
+    })();
+
+    selectPatientBtn.addEventListener("click", function () {
+      exercisePanel.classList.add("active");
+      exerciseMessage.textContent = "";
+    });
+
+    saveExerciseBtn.addEventListener("click", function () {
+      const checkboxes = exercisePanel.querySelectorAll("input[type='checkbox']");
+      const selected = [];
+      checkboxes.forEach((cb) => {
+        if (cb.checked) selected.push(cb.nextElementSibling.textContent.trim());
+      });
+
+      if (selected.length === 0) {
+        exerciseMessage.textContent = "한 가지 이상 운동을 선택해 주세요.";
+        exerciseMessage.style.color = "#b91c1c";
+        return;
+      }
+
+      exerciseMessage.textContent = "선택된 운동: " + selected.join(", ");
+      exerciseMessage.style.color = "#047857";
+
+      // 김환자 대시보드에 선택된 운동 표시용 데이터 저장
+      localStorage.setItem("patientName", "김환자");
+      localStorage.setItem("selectedExercises", JSON.stringify(selected));
+      // 새로 선택하면 전송 완료 상태를 해제
+      localStorage.removeItem("exerciseSent");
+      localStorage.removeItem("exerciseCounts"); // 새로 선택하면 횟수 기본값으로 초기화
+
+      // 대시보드로 이동
+      window.location.href = "patient_dashboard.html";
+    });
+  </script>
+</body>
+</html>
+

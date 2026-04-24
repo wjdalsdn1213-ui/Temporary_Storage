@@ -1,0 +1,5 @@
+python-socketio[asyncio_client]==5.11.4
+uvicorn[standard]==0.30.6
+python-dotenv==1.0.1
+starlette==0.38.6
+zeroconf==0.132.2
